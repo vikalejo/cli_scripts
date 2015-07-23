@@ -1,5 +1,5 @@
 require 'developer_challenge/version'
-require 'developer_challenge/cli/slow_api'
+require 'developer_challenge/slow_api'
 require 'developer_challenge'
 
-::DeveloperChallenge::Cli::SlowApi.start(ARGV)
+::DeveloperChallenge::SlowApi.start(ARGV)
