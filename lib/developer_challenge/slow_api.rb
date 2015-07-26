@@ -1,19 +1,14 @@
-require 'thor'
 require 'net/http'
 
 module DeveloperChallenge
-  class SlowApi < Thor
+  class SlowApi
     URL_SLOWAPI = URI('http://www.slowapi.com/delay/0.3')
-
-    desc 'Slowapi -n [number]', 'make n times a request to a Novicap url'
-    method_option :test
-    method_option :number, :aliases => "-n"
 
     # Checks if the option 'test' is received to run
     # If received, will call do_request with the number of times passed
-    def slowapi
-      if correct_options?(options)
-        times = options[:number].to_i
+    def slowapi(number)
+      if correct_number?(number)
+        times = number.to_i
         puts "Starting request to slowapi"
         begin
           do_request_and_write_response(times)
@@ -30,10 +25,9 @@ module DeveloperChallenge
 
     private
 
-    def correct_options?(options)
-      test = options[:test]
-      times = options[:number].to_i
-      (test && times && times > 0) ? true : false
+    def correct_number?(number)
+      number = number.to_i
+      (number > 0) ? true : false
     end
 
     # Do requests to slowapi the number of times received in options

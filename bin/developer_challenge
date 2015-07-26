@@ -1,3 +1,39 @@
 #!/usr/bin/env ruby
 
 require 'developer_challenge'
+
+module Challenge
+  def self.check_app(params)
+    case params[:app]
+    when 'slowapi'
+      Challenge.launch_slowapi(params[:arg1], params[:arg2])
+    when 'minimum_path_sum'
+      Challenge.launch_sum_path(params[:arg1], params[:arg2])
+    else
+      Challenge.incorrect_arguments
+    end
+  end
+
+  def self.incorrect_arguments
+    abort 'Incorrect arguments, please run it as:' \
+      'developer_challenge --test slowapi -n [number]' \
+      'developer_challenge --test minimum_path_sum -f [file]'
+  end
+
+  def self.launch_slowapi(arg1, number)
+    ::DeveloperChallenge::SlowApi.new.slowapi(number) if arg1 == '-n'
+    Challenge.incorrect_arguments
+  end
+
+  def self.launch_sum_path(arg1, file)
+    ::DeveloperChallenge::PathSum.new.minimum_path_sum(file) if arg1 == '-f'
+    Challenge.incorrect_arguments
+  end
+
+  ARGV.each do |a|
+    params = { mode: ARGV[0], app: ARGV[1], arg1: ARGV[2], arg2: ARGV[3] }
+    Challenge.incorrect_arguments if params.has_value?(nil)
+    Challenge.check_app(params) if params[:mode] == '--test'
+    Challenge.incorrect_arguments
+  end
+end
