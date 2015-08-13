@@ -1,3 +1,5 @@
+require 'thread'
+
 module DeveloperChallenge
   class PathSum
     def minimum_path_sum(file)
@@ -18,68 +20,41 @@ module DeveloperChallenge
 
     def get_and_print_result(triangle)
       result = sum_path(triangle)
-      last_array = result.last
 
       # Print the result
-      result_minimum_sum_path(result.flatten!.min)
-      result_sum_last_element_path(last_array.last)
+      result_minimun_sum_path(result.min)
+      result_sum_last_element_path(result.last)
     end
 
-    # Calculates the sum between the elements of the structure
     def sum_path(triangle)
-      sum = []
       partial = []
+      i,j= 0,0
 
-      triangle.inject([]) do |res, x|
-        if sum.empty?
-          sum << x
-        else
-          sum.each do |element|
-            # Check if is an array to allow work with isolate values
-            if element.is_a?(Array)
-              element.each_with_index do |ae, ine|
-                partial << iterate_with_array(x, ae, ine)
-              end
-            else
-              partial = iterate_with_array(x, element, ine)
-              sum = partial
-              res = sum
-            end
+      tmp = triangle
+      (1...tmp.size).each do |i|
+        (0...tmp.size).each do |j|
+          if j == 0
+            tmp[i][j] = tmp[i][j] + triangle[i-1][j] if !triangle[i-1][j].nil?
+          else
+            from_up   = tmp[i][j] + triangle[i-1][j] if !triangle[i-1][j].nil?
+            from_left = tmp[i][j] + triangle[i-1][j-1] if !triangle[i-1][j-1].nil?
+            tmp[i][j] = if from_up.nil?
+                          from_left if !from_left.nil?
+                        else
+                          tmp[i][j] = from_up > from_left ? from_left : from_up
+                        end
           end
-
-          sum = partial
-          partial = []
-          res = sum
         end
       end
-    end
-
-    # Iterates with each element of the lines of the triangle
-    # only if the values are adjacents
-    def iterate_with_array(x, ae, ine)
-      acumulate = []
-      x.each_with_index do |value, index|
-        acumulate << ([ae + value]) if adjacent?(index,ine)
-
-        # This will force to do the last iteration
-        if index == x.size - 1
-          acumulate << ([ae + value]) if adjacent?(index,ine)
-        end
-      end
-      acumulate.flatten!
-    end
-
-    def adjacent?(inx, ine)
-      diff = (inx - ine).abs
-      (diff == 0) || (diff == 1) ? true : false
+      tmp.last
     end
 
     def result_sum_last_element_path(minimum_value)
       puts "The sum from the top to the bottom of the last value is #{minimum_value}"
     end
 
-    def result_minimum_sum_path(minimum_value)
-      puts "The minimum sum from the top to the bottom is #{minimum_value}"
+    def result_minimun_sum_path(minimun_value)
+      puts "The minimun sum from the top to the bottom is #{minimun_value}"
     end
   end
 end
