@@ -6,5 +6,7 @@ group :test do
   gem 'webmock'
 end
 
+gem 'thread'
+
 # Specify your gem's dependencies in developer_challenge.gemspec
 gemspec
